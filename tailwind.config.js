@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        mono: ['JetBrains Mono', 'monospace'],
+        mono: ['var(--font-jetbrains-mono)', 'monospace'],
       },
       colors: {
         accent: '#dc2626',
