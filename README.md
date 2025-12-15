@@ -1,24 +1,30 @@
-# 🎸 ROCKN - AI Music Industry News (V2)
+# ROCKN Frontend V3 - Upload Instructions
 
-A brutalist, fully interactive news aggregator for music industry intelligence.
+## What's Fixed:
+✅ Source logos (Clearbit) with fallback
+✅ Working thumbs up/down (saves to database)
+✅ Clean design
+✅ All sources mapped
 
-## Features
-- 🔍 Real-time search
-- 📊 Sort by date, score, source, or title
-- 📰 Filter by source
-- 🏷️ Filter by category
-- ⭐ Filter by minimum score
-- ⭐ Top Stories section (80+ scores)
-- 📱 Fully responsive
+## How to Upload:
 
-## Tech Stack
-- Next.js 14
-- React 18
-- Tailwind CSS
-- PostgreSQL (Railway)
-- Vercel Hosting
+1. Go to: github.com/brianfurano-cpu/rockn-frontend
+2. Delete the `app` folder (click it → ... → Delete directory → Commit)
+3. Delete `package.json`, `tailwind.config.js`, etc.
+4. Click "Add file" → "Upload files"
+5. Drag ALL files from this folder
+6. Commit changes
+7. Wait 1-2 min for Vercel
+8. Refresh rockn.com
 
-## Environment Variables
-```
-DATABASE_URL=your_postgresql_connection_string
-```
+## Files included:
+- app/page.js
+- app/layout.js
+- app/globals.css
+- app/components/ArticlesFeed.js
+- app/api/vote/route.js (NEW - handles thumbs voting)
+- package.json
+- tailwind.config.js
+- postcss.config.js
+- next.config.js
+- .gitignore
