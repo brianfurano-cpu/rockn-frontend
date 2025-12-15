@@ -11,7 +11,7 @@ module.exports = {
         mono: ['var(--font-jetbrains-mono)', 'monospace'],
       },
       colors: {
-        accent: '#dc2626',
+        accent: '#15803d',
       },
     },
   },

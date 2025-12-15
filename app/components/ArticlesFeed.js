@@ -31,16 +31,16 @@ export default function ArticlesFeed({ articles }) {
         const matchesSource = article.source?.toLowerCase().includes(search);
         if (!matchesTitle && !matchesSummary && !matchesSource) return false;
       }
-      
+
       // Source filter
       if (filterSource !== 'all' && article.source !== filterSource) return false;
-      
+
       // Category filter
       if (filterCategory !== 'all' && article.category !== filterCategory) return false;
-      
+
       // Score filter
       if (article.relevance_score < minScore) return false;
-      
+
       return true;
     });
 
@@ -83,11 +83,11 @@ export default function ArticlesFeed({ articles }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      
+
       {/* TOP STORIES */}
       {topStories.length > 0 && !hasActiveFilters && (
         <section className="mb-12">
-          <h2 className="text-red-600 text-sm font-black tracking-widest mb-6 flex items-center gap-2">
+          <h2 className="text-green-700 text-sm font-black tracking-widest mb-6 flex items-center gap-2">
             <span className="text-xl">⭐</span> TOP RATED STORIES
           </h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -97,18 +97,18 @@ export default function ArticlesFeed({ articles }) {
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block bg-gradient-to-br from-gray-900 to-black border-2 border-red-600 hover:border-white transition-all duration-200 rounded-lg overflow-hidden"
+                className="group block bg-gradient-to-br from-gray-900 to-black border-2 border-green-700 hover:border-white transition-all duration-200 rounded-lg overflow-hidden"
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
-                    <span className="text-xs font-black bg-red-600 text-black px-3 py-1 rounded">
+                    <span className="text-xs font-black bg-green-700 text-white px-3 py-1 rounded">
                       #{idx + 1} TOP
                     </span>
                     <span className="text-sm font-mono text-green-400 font-bold">
                       {article.relevance_score}
                     </span>
                   </div>
-                  <h3 className="text-lg font-black leading-tight mb-3 group-hover:text-red-600 transition-colors line-clamp-3">
+                  <h3 className="text-lg font-black leading-tight mb-3 group-hover:text-green-500 transition-colors line-clamp-3">
                     {article.title}
                   </h3>
                   <p className="text-gray-400 text-sm mb-4 line-clamp-2">
@@ -134,7 +134,7 @@ export default function ArticlesFeed({ articles }) {
             placeholder="🔍 Search articles..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-900 border-2 border-gray-700 focus:border-red-600 text-white px-4 py-3 text-lg outline-none transition-colors rounded-lg"
+            className="w-full bg-gray-900 border-2 border-gray-700 focus:border-green-700 text-white px-4 py-3 text-lg outline-none transition-colors rounded-lg"
           />
           {searchTerm && (
             <button
@@ -152,7 +152,7 @@ export default function ArticlesFeed({ articles }) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-gray-900 border-2 border-gray-700 text-white px-4 py-2 outline-none focus:border-red-600 cursor-pointer rounded-lg"
+            className="bg-gray-900 border-2 border-gray-700 text-white px-4 py-2 outline-none focus:border-green-700 cursor-pointer rounded-lg"
           >
             <option value="date">📅 Sort by Date</option>
             <option value="score">⭐ Sort by Score</option>
@@ -164,7 +164,7 @@ export default function ArticlesFeed({ articles }) {
           <select
             value={filterSource}
             onChange={(e) => setFilterSource(e.target.value)}
-            className="bg-gray-900 border-2 border-gray-700 text-white px-4 py-2 outline-none focus:border-red-600 cursor-pointer rounded-lg"
+            className="bg-gray-900 border-2 border-gray-700 text-white px-4 py-2 outline-none focus:border-green-700 cursor-pointer rounded-lg"
           >
             <option value="all">📰 All Sources</option>
             {sources.map(source => (
@@ -177,7 +177,7 @@ export default function ArticlesFeed({ articles }) {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="bg-gray-900 border-2 border-gray-700 text-white px-4 py-2 outline-none focus:border-red-600 cursor-pointer rounded-lg"
+              className="bg-gray-900 border-2 border-gray-700 text-white px-4 py-2 outline-none focus:border-green-700 cursor-pointer rounded-lg"
             >
               <option value="all">🏷️ All Categories</option>
               {categories.map(cat => (
@@ -190,7 +190,7 @@ export default function ArticlesFeed({ articles }) {
           <select
             value={minScore}
             onChange={(e) => setMinScore(Number(e.target.value))}
-            className="bg-gray-900 border-2 border-gray-700 text-white px-4 py-2 outline-none focus:border-red-600 cursor-pointer rounded-lg"
+            className="bg-gray-900 border-2 border-gray-700 text-white px-4 py-2 outline-none focus:border-green-700 cursor-pointer rounded-lg"
           >
             <option value={0}>⭐ Any Score</option>
             <option value={50}>⭐ 50+ Score</option>
@@ -203,7 +203,7 @@ export default function ArticlesFeed({ articles }) {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="bg-red-600 hover:bg-red-700 text-black font-bold px-4 py-2 transition-colors rounded-lg"
+              className="bg-green-700 hover:bg-green-600 text-white font-bold px-4 py-2 transition-colors rounded-lg"
             >
               ✕ Clear Filters
             </button>
@@ -218,16 +218,16 @@ export default function ArticlesFeed({ articles }) {
 
       {/* ARTICLES LIST */}
       <section>
-        <h2 className="text-red-600 text-sm font-black tracking-widest mb-6">
+        <h2 className="text-green-700 text-sm font-black tracking-widest mb-6">
           ▌{hasActiveFilters ? 'FILTERED RESULTS' : 'ALL STORIES'}
         </h2>
-        
+
         {filteredArticles.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-500 text-xl">No articles found</p>
             <button
               onClick={clearFilters}
-              className="mt-4 text-red-600 hover:text-red-400 underline"
+              className="mt-4 text-green-700 hover:text-green-500 underline"
             >
               Clear filters
             </button>
@@ -240,31 +240,29 @@ export default function ArticlesFeed({ articles }) {
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col md:flex-row md:items-start gap-4 p-4 border-l-4 border-gray-800 hover:border-red-600 hover:bg-gray-900/50 transition-all rounded-r-lg"
+                className="group flex flex-col md:flex-row md:items-start gap-4 p-4 border-l-4 border-gray-800 hover:border-green-700 hover:bg-gray-900/50 transition-all rounded-r-lg"
               >
                 {/* Score */}
                 <div className="flex-shrink-0 w-16 text-center hidden md:block">
-                  <span className={`text-2xl font-black ${
-                    article.relevance_score >= 80 ? 'text-green-400' : 
-                    article.relevance_score >= 70 ? 'text-yellow-400' : 
-                    article.relevance_score >= 60 ? 'text-orange-400' : 'text-gray-500'
-                  }`}>
+                  <span className={`text-2xl font-black ${article.relevance_score >= 80 ? 'text-green-400' :
+                      article.relevance_score >= 70 ? 'text-yellow-400' :
+                        article.relevance_score >= 60 ? 'text-orange-400' : 'text-gray-500'
+                    }`}>
                     {article.relevance_score || '—'}
                   </span>
                   <p className="text-xs text-gray-600 uppercase">Score</p>
                 </div>
-                
+
                 {/* Content */}
                 <div className="flex-grow">
                   <div className="flex items-start justify-between gap-2 mb-1">
-                    <h3 className="font-bold text-lg group-hover:text-red-600 transition-colors">
+                    <h3 className="font-bold text-lg group-hover:text-green-500 transition-colors">
                       {article.title}
                     </h3>
-                    <span className={`md:hidden flex-shrink-0 text-sm font-bold px-2 py-1 rounded ${
-                      article.relevance_score >= 80 ? 'bg-green-400 text-black' : 
-                      article.relevance_score >= 70 ? 'bg-yellow-400 text-black' : 
-                      'bg-gray-700 text-white'
-                    }`}>
+                    <span className={`md:hidden flex-shrink-0 text-sm font-bold px-2 py-1 rounded ${article.relevance_score >= 80 ? 'bg-green-400 text-black' :
+                        article.relevance_score >= 70 ? 'bg-yellow-400 text-black' :
+                          'bg-gray-700 text-white'
+                      }`}>
                       {article.relevance_score || '—'}
                     </span>
                   </div>
@@ -275,13 +273,13 @@ export default function ArticlesFeed({ articles }) {
                     <span className="uppercase font-bold text-gray-400">{article.source}</span>
                     <span>{new Date(article.pub_date).toLocaleDateString()}</span>
                     {article.category && (
-                      <span className="text-red-600 bg-red-600/10 px-2 py-0.5 rounded">{article.category}</span>
+                      <span className="text-green-400 bg-green-900/30 px-2 py-0.5 rounded">{article.category}</span>
                     )}
                   </div>
                 </div>
 
                 {/* Arrow */}
-                <div className="hidden md:flex items-center text-gray-600 group-hover:text-red-600 transition-colors">
+                <div className="hidden md:flex items-center text-gray-600 group-hover:text-green-500 transition-colors">
                   <span className="text-2xl">→</span>
                 </div>
               </a>
