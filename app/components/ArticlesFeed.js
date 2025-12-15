@@ -2,6 +2,21 @@
 
 import { useState, useMemo } from 'react';
 
+const SOURCE_DOMAINS = {
+  'Billboard': 'billboard.com',
+  'Pitchfork': 'pitchfork.com',
+  'Rolling Stone': 'rollingstone.com',
+  'Music Business Worldwide': 'musicbusinessworldwide.com',
+  'Variety': 'variety.com',
+  'NME': 'nme.com',
+  'Digital Music News': 'digitalmusicnews.com',
+  'Music Ally': 'musically.com',
+  'Hypebot': 'hypebot.com',
+  'Complext': 'complex.com',
+  'The FADER': 'thefader.com',
+  'Stereogum': 'stereogum.com'
+};
+
 export default function ArticlesFeed({ articles }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('date');
@@ -63,6 +78,34 @@ export default function ArticlesFeed({ articles }) {
     return result;
   }, [articles, searchTerm, sortBy, filterSource, filterCategory, minScore]);
 
+  // Vote handler
+  const handleVote = async (e, articleId, type) => {
+    e.preventDefault(); // Prevent link navigation
+    e.stopPropagation();
+
+    try {
+      // Optimistic UI update could go here, but for now we'll just fire and forget
+      // or show a toast if we had one.
+      const res = await fetch('/api/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ articleId, voteType: type }),
+      });
+
+      if (!res.ok) throw new Error('Vote failed');
+
+      // Visual feedback
+      const btn = e.currentTarget;
+      btn.classList.add('text-green-400', 'scale-125');
+      setTimeout(() => btn.classList.remove('scale-125'), 200);
+
+    } catch (err) {
+      console.error('Failed to vote:', err);
+      // Fallback for local dev/mock mode
+      console.log(`Voted ${type} on article ${articleId}`);
+    }
+  };
+
   // Top stories (score >= 80)
   const topStories = useMemo(() => {
     return articles
@@ -97,7 +140,7 @@ export default function ArticlesFeed({ articles }) {
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block bg-gradient-to-br from-gray-900 to-black border-2 border-green-700 hover:border-white transition-all duration-200 rounded-lg overflow-hidden"
+                className="group block bg-gradient-to-br from-gray-900 to-black border-2 border-green-700 hover:border-white transition-all duration-200 rounded-lg overflow-hidden h-full flex flex-col"
               >
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
@@ -240,17 +283,55 @@ export default function ArticlesFeed({ articles }) {
                 href={article.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col md:flex-row md:items-start gap-4 p-4 border-l-4 border-gray-800 hover:border-green-700 hover:bg-gray-900/50 transition-all rounded-r-lg"
+                className="group flex flex-col sm:flex-row gap-4 p-4 border-l-4 border-gray-800 hover:border-green-700 hover:bg-gray-900/50 transition-all rounded-r-lg"
               >
-                {/* Score */}
-                <div className="flex-shrink-0 w-16 text-center hidden md:block">
-                  <span className={`text-2xl font-black ${article.relevance_score >= 80 ? 'text-green-400' :
+                {/* Thumbnail */}
+                <div className="flex-shrink-0 w-full sm:w-32 h-32 bg-gray-800 rounded-lg overflow-hidden relative">
+                  {(article.image_url || SOURCE_DOMAINS[article.source]) ? (
+                    <img
+                      src={article.image_url || `https://logo.clearbit.com/${SOURCE_DOMAINS[article.source]}`}
+                      alt={article.title}
+                      className={`w-full h-full ${article.image_url ? 'object-cover' : 'object-contain p-4 bg-black'} group-hover:scale-110 transition-transform duration-500`}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div className="w-full h-full absolute top-0 left-0 hidden items-center justify-center text-gray-700 text-3xl bg-gray-900" style={{ display: (article.image_url || SOURCE_DOMAINS[article.source]) ? 'none' : 'flex' }}>
+                    🎸
+                  </div>
+                </div>
+
+                {/* Score & Vote */}
+                <div className="flex-shrink-0 flex flex-row sm:flex-col items-center justify-between sm:justify-start gap-2 sm:w-16 text-center">
+                  <div>
+                    <span className={`text-2xl font-black ${article.relevance_score >= 80 ? 'text-green-400' :
                       article.relevance_score >= 70 ? 'text-yellow-400' :
                         article.relevance_score >= 60 ? 'text-orange-400' : 'text-gray-500'
-                    }`}>
-                    {article.relevance_score || '—'}
-                  </span>
-                  <p className="text-xs text-gray-600 uppercase">Score</p>
+                      }`}>
+                      {article.relevance_score || '—'}
+                    </span>
+                    <p className="text-xs text-gray-600 uppercase">Score</p>
+                  </div>
+
+                  {/* Vote Buttons */}
+                  <div className="flex sm:flex-col gap-2 mt-2">
+                    <button
+                      onClick={(e) => handleVote(e, article.id, 'up')}
+                      className="p-1 text-gray-600 hover:text-green-500 hover:bg-green-900/30 rounded transition-all"
+                      title="More like this"
+                    >
+                      👍
+                    </button>
+                    <button
+                      onClick={(e) => handleVote(e, article.id, 'down')}
+                      className="p-1 text-gray-600 hover:text-red-500 hover:bg-red-900/30 rounded transition-all"
+                      title="Less like this"
+                    >
+                      👎
+                    </button>
+                  </div>
                 </div>
 
                 {/* Content */}
@@ -260,8 +341,8 @@ export default function ArticlesFeed({ articles }) {
                       {article.title}
                     </h3>
                     <span className={`md:hidden flex-shrink-0 text-sm font-bold px-2 py-1 rounded ${article.relevance_score >= 80 ? 'bg-green-400 text-black' :
-                        article.relevance_score >= 70 ? 'bg-yellow-400 text-black' :
-                          'bg-gray-700 text-white'
+                      article.relevance_score >= 70 ? 'bg-yellow-400 text-black' :
+                        'bg-gray-700 text-white'
                       }`}>
                       {article.relevance_score || '—'}
                     </span>

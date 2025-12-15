@@ -9,7 +9,7 @@ async function getArticles() {
 
   try {
     const result = await pool.query(
-      `SELECT id, title, url, source, ai_summary, relevance_score, pub_date, category 
+      `SELECT id, title, url, source, ai_summary, relevance_score, pub_date, category, image_url 
        FROM articles 
        ORDER BY pub_date DESC 
        LIMIT 200`
@@ -33,7 +33,8 @@ const MOCK_ARTICLES = [
     ai_summary: "Major record labels have filed a collective lawsuit against leading AI music generation platforms, citing massive copyright infringement of their catalog data used for training models without license.",
     relevance_score: 95,
     pub_date: new Date().toISOString(),
-    category: "Legal"
+    category: "Legal",
+    image_url: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 2,
@@ -43,7 +44,8 @@ const MOCK_ARTICLES = [
     ai_summary: "After years of speculation, Spotify is rolling out its high-fidelity tier, priced at $19.99, which also includes advanced AI-powered playlist generation tools and audiobook hours.",
     relevance_score: 88,
     pub_date: new Date(Date.now() - 3600000).toISOString(),
-    category: "Streaming"
+    category: "Streaming",
+    image_url: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 3,
@@ -53,7 +55,8 @@ const MOCK_ARTICLES = [
     ai_summary: "Rising travel costs and visa issues are forcing independent artists to focus on regional micro-tours, building dense fanbases in smaller geographic areas effectively.",
     relevance_score: 72,
     pub_date: new Date(Date.now() - 7200000).toISOString(),
-    category: "Touring"
+    category: "Touring",
+    image_url: "https://images.unsplash.com/photo-1459749411177-d04bf3067a28?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 4,
@@ -63,7 +66,8 @@ const MOCK_ARTICLES = [
     ai_summary: "A new initiative will allow select artists to license their voice models for creator use, attempting to monetize the AI cover wave rather than unauthorized mimicking.",
     relevance_score: 82,
     pub_date: new Date(Date.now() - 10800000).toISOString(),
-    category: "Tech"
+    category: "Tech",
+    image_url: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=800"
   },
   {
     id: 5,
@@ -73,7 +77,8 @@ const MOCK_ARTICLES = [
     ai_summary: "Physical media resurgence continues as vinyl records show strong growth, particularly among Gen Z listeners discovering the format for the first time.",
     relevance_score: 65,
     pub_date: new Date(Date.now() - 86400000).toISOString(),
-    category: "Charts"
+    category: "Charts",
+    image_url: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?auto=format&fit=crop&q=80&w=800"
   }
 ];
 
