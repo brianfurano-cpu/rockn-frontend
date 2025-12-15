@@ -2,50 +2,56 @@
 
 import { useState, useMemo } from 'react';
 
-// Source domain mapping for logos
-const SOURCE_DOMAINS = {
-  'Billboard': 'billboard.com',
-  'Pitchfork': 'pitchfork.com',
-  'Rolling Stone': 'rollingstone.com',
-  'Music Business Worldwide': 'musicbusinessworldwide.com',
-  'Variety': 'variety.com',
-  'NME': 'nme.com',
-  'Digital Music News': 'digitalmusicnews.com',
-  'Music Ally': 'musically.com',
-  'Hypebot': 'hypebot.com',
-  'Complex': 'complex.com',
-  'The FADER': 'thefader.com',
-  'Stereogum': 'stereogum.com',
-  'Wired': 'wired.com',
-  'The Verge AI': 'theverge.com',
-  'The Verge': 'theverge.com',
-  'TechCrunch': 'techcrunch.com',
-  'TechCrunch AI': 'techcrunch.com',
-  'Ars Technica': 'arstechnica.com',
-  'Ars Technica AI': 'arstechnica.com',
-  'Hollywood Reporter': 'hollywoodreporter.com',
-  'Hollywood Reporter Music': 'hollywoodreporter.com',
-  'Consequence': 'consequence.net',
-  'Brooklyn Vegan': 'brooklynvegan.com',
-  'Spin': 'spin.com',
-  'Resident Advisor': 'residentadvisor.net',
-  'EDM.com': 'edm.com',
-  'Your EDM': 'youredm.com',
-  'Dancing Astronaut': 'dancingastronaut.com',
-  'DJ Mag': 'djmag.com',
-  'Mixmag': 'mixmag.net',
+// Direct logo URLs for each source (more reliable than Clearbit)
+const SOURCE_LOGOS = {
+  'Billboard': 'https://www.billboard.com/wp-content/themes/flavor-flavor-flavor-flavor-flavor/assets/images/favicon.png',
+  'Pitchfork': 'https://cdn.pitchfork.com/assets/misc/favicon-32x32.png',
+  'Rolling Stone': 'https://www.rollingstone.com/favicon.ico',
+  'Music Business Worldwide': 'https://www.musicbusinessworldwide.com/favicon.ico',
+  'Variety': 'https://variety.com/wp-content/uploads/2023/12/cropped-favicon-v-32x32.png',
+  'NME': 'https://www.nme.com/favicon.ico',
+  'Digital Music News': 'https://www.digitalmusicnews.com/favicon.ico',
+  'Music Ally': 'https://musically.com/favicon.ico',
+  'Hypebot': 'https://www.hypebot.com/favicon.ico',
+  'Complex': 'https://www.complex.com/favicon.ico',
+  'The FADER': 'https://www.thefader.com/favicon.ico',
+  'Stereogum': 'https://www.stereogum.com/favicon.ico',
+  'Wired': 'https://www.wired.com/favicon.ico',
+  'The Verge': 'https://www.theverge.com/favicon.ico',
+  'The Verge AI': 'https://www.theverge.com/favicon.ico',
+  'TechCrunch': 'https://techcrunch.com/favicon.ico',
+  'TechCrunch AI': 'https://techcrunch.com/favicon.ico',
+  'Ars Technica': 'https://arstechnica.com/favicon.ico',
+  'Ars Technica AI': 'https://arstechnica.com/favicon.ico',
+  'Hollywood Reporter': 'https://www.hollywoodreporter.com/favicon.ico',
+  'Hollywood Reporter Music': 'https://www.hollywoodreporter.com/favicon.ico',
+  'Consequence': 'https://consequence.net/favicon.ico',
+  'Brooklyn Vegan': 'https://www.brooklynvegan.com/favicon.ico',
+  'Spin': 'https://www.spin.com/favicon.ico',
+  'Resident Advisor': 'https://ra.co/favicon.ico',
+  'DJ Mag': 'https://djmag.com/favicon.ico',
+  'Mixmag': 'https://mixmag.net/favicon.ico',
 };
 
-// Get logo URL for a source
-function getLogoUrl(source) {
-  const domain = SOURCE_DOMAINS[source];
-  if (domain) {
-    return `https://logo.clearbit.com/${domain}`;
-  }
-  // Fallback: try to guess domain from source name
-  const guessedDomain = source.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
-  return `https://logo.clearbit.com/${guessedDomain}`;
-}
+// Color mapping for fallback letters
+const SOURCE_COLORS = {
+  'Billboard': '#FF0000',
+  'Pitchfork': '#FF0000',
+  'Rolling Stone': '#E30613',
+  'Music Business Worldwide': '#1E88E5',
+  'Variety': '#000000',
+  'NME': '#FF0000',
+  'Digital Music News': '#0066CC',
+  'Wired': '#000000',
+  'The Verge': '#FA4B2A',
+  'The Verge AI': '#FA4B2A',
+  'TechCrunch': '#00A562',
+  'TechCrunch AI': '#00A562',
+  'Ars Technica': '#FF4400',
+  'Ars Technica AI': '#FF4400',
+  'Hollywood Reporter': '#000000',
+  'Hollywood Reporter Music': '#000000',
+};
 
 export default function ArticlesFeed({ articles: initialArticles }) {
   const [articles, setArticles] = useState(initialArticles);
@@ -54,6 +60,7 @@ export default function ArticlesFeed({ articles: initialArticles }) {
   const [filterSource, setFilterSource] = useState('all');
   const [minScore, setMinScore] = useState(0);
   const [votingId, setVotingId] = useState(null);
+  const [failedLogos, setFailedLogos] = useState({});
 
   // Get unique sources
   const sources = useMemo(() => {
@@ -64,7 +71,6 @@ export default function ArticlesFeed({ articles: initialArticles }) {
   // Filter and sort articles
   const filteredArticles = useMemo(() => {
     let result = articles.filter(article => {
-      // Search filter
       if (searchTerm) {
         const search = searchTerm.toLowerCase();
         const matchesTitle = article.title?.toLowerCase().includes(search);
@@ -72,17 +78,11 @@ export default function ArticlesFeed({ articles: initialArticles }) {
         const matchesSource = article.source?.toLowerCase().includes(search);
         if (!matchesTitle && !matchesSummary && !matchesSource) return false;
       }
-      
-      // Source filter
       if (filterSource !== 'all' && article.source !== filterSource) return false;
-      
-      // Score filter
       if (article.relevance_score < minScore) return false;
-      
       return true;
     });
 
-    // Sort
     result.sort((a, b) => {
       switch (sortBy) {
         case 'date':
@@ -112,7 +112,6 @@ export default function ArticlesFeed({ articles: initialArticles }) {
       
       if (response.ok) {
         const data = await response.json();
-        // Update local state
         setArticles(prev => prev.map(article => 
           article.id === articleId 
             ? { ...article, thumbs_up: data.thumbs_up, thumbs_down: data.thumbs_down }
@@ -126,6 +125,10 @@ export default function ArticlesFeed({ articles: initialArticles }) {
     }
   };
 
+  const handleLogoError = (source) => {
+    setFailedLogos(prev => ({ ...prev, [source]: true }));
+  };
+
   const clearFilters = () => {
     setSearchTerm('');
     setSortBy('date');
@@ -135,12 +138,21 @@ export default function ArticlesFeed({ articles: initialArticles }) {
 
   const hasActiveFilters = searchTerm || sortBy !== 'date' || filterSource !== 'all' || minScore > 0;
 
+  // Get logo for source
+  const getSourceLogo = (source) => {
+    if (failedLogos[source]) return null;
+    return SOURCE_LOGOS[source] || null;
+  };
+
+  const getSourceColor = (source) => {
+    return SOURCE_COLORS[source] || '#22c55e';
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       
       {/* SEARCH & FILTERS */}
       <div className="mb-6 space-y-3">
-        {/* Search Bar */}
         <div className="relative">
           <input
             type="text"
@@ -159,7 +171,6 @@ export default function ArticlesFeed({ articles: initialArticles }) {
           )}
         </div>
 
-        {/* Filter Controls */}
         <div className="flex flex-wrap gap-2">
           <select
             value={sortBy}
@@ -204,7 +215,6 @@ export default function ArticlesFeed({ articles: initialArticles }) {
           )}
         </div>
 
-        {/* Results Count */}
         <p className="text-gray-500 text-sm">
           Showing <span className="text-white font-bold">{filteredArticles.length}</span> of {articles.length} articles
         </p>
@@ -220,92 +230,98 @@ export default function ArticlesFeed({ articles: initialArticles }) {
             </button>
           </div>
         ) : (
-          filteredArticles.map((article) => (
-            <div
-              key={article.id}
-              className="flex gap-3 p-3 bg-gray-900/50 border border-gray-800 hover:border-green-500/50 rounded-lg transition-all"
-            >
-              {/* Logo */}
-              <div className="flex-shrink-0 w-12 h-12 bg-gray-800 rounded-lg overflow-hidden flex items-center justify-center">
-                <img 
-                  src={article.image_url || getLogoUrl(article.source)}
-                  alt={article.source}
-                  className="w-full h-full object-contain p-1"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-                <div className="hidden w-full h-full items-center justify-center text-green-500 text-lg font-bold">
-                  {article.source?.charAt(0) || '?'}
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="flex-grow min-w-0">
-                <a
-                  href={article.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block group"
+          filteredArticles.map((article) => {
+            const logoUrl = getSourceLogo(article.source);
+            const sourceColor = getSourceColor(article.source);
+            
+            return (
+              <div
+                key={article.id}
+                className="flex gap-3 p-3 bg-gray-900/50 border border-gray-800 hover:border-green-500/50 rounded-lg transition-all"
+              >
+                {/* Logo */}
+                <div 
+                  className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden flex items-center justify-center"
+                  style={{ backgroundColor: logoUrl ? '#1f2937' : sourceColor }}
                 >
-                  <h3 className="font-bold text-white group-hover:text-green-400 transition-colors line-clamp-2">
-                    {article.title}
-                  </h3>
-                </a>
-                <p className="text-gray-500 text-sm mt-1 line-clamp-2">
-                  {article.ai_summary}
-                </p>
-                <div className="flex flex-wrap items-center gap-3 mt-2">
-                  <span className="text-xs text-gray-400 font-medium">{article.source}</span>
-                  <span className="text-xs text-gray-600">
-                    {new Date(article.pub_date).toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-
-              {/* Score & Voting */}
-              <div className="flex-shrink-0 flex flex-col items-center gap-2">
-                {/* Score */}
-                <div className={`text-lg font-black px-2 py-1 rounded ${
-                  article.relevance_score >= 80 ? 'text-green-400' : 
-                  article.relevance_score >= 60 ? 'text-yellow-400' : 'text-gray-500'
-                }`}>
-                  {article.relevance_score || '—'}
+                  {logoUrl ? (
+                    <img 
+                      src={logoUrl}
+                      alt={article.source}
+                      className="w-8 h-8 object-contain"
+                      onError={() => handleLogoError(article.source)}
+                    />
+                  ) : (
+                    <span className="text-white text-xl font-bold">
+                      {article.source?.charAt(0) || '?'}
+                    </span>
+                  )}
                 </div>
 
-                {/* Thumbs */}
-                <div className="flex gap-1">
-                  <button
-                    onClick={() => handleVote(article.id, 'up')}
-                    disabled={votingId === article.id}
-                    className={`p-1.5 rounded transition-all ${
-                      votingId === article.id 
-                        ? 'opacity-50 cursor-wait' 
-                        : 'hover:bg-green-500/20 active:scale-95'
-                    }`}
-                    title="Thumbs up"
+                {/* Content */}
+                <div className="flex-grow min-w-0">
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block group"
                   >
-                    <span className="text-lg">👍</span>
-                    <span className="text-xs text-gray-500 block">{article.thumbs_up || 0}</span>
-                  </button>
-                  <button
-                    onClick={() => handleVote(article.id, 'down')}
-                    disabled={votingId === article.id}
-                    className={`p-1.5 rounded transition-all ${
-                      votingId === article.id 
-                        ? 'opacity-50 cursor-wait' 
-                        : 'hover:bg-red-500/20 active:scale-95'
-                    }`}
-                    title="Thumbs down"
-                  >
-                    <span className="text-lg">👎</span>
-                    <span className="text-xs text-gray-500 block">{article.thumbs_down || 0}</span>
-                  </button>
+                    <h3 className="font-bold text-white group-hover:text-green-400 transition-colors line-clamp-2">
+                      {article.title}
+                    </h3>
+                  </a>
+                  <p className="text-gray-500 text-sm mt-1 line-clamp-2">
+                    {article.ai_summary}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
+                    <span className="text-xs text-gray-400 font-medium">{article.source}</span>
+                    <span className="text-xs text-gray-600">
+                      {new Date(article.pub_date).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Score & Voting */}
+                <div className="flex-shrink-0 flex flex-col items-center gap-2">
+                  <div className={`text-lg font-black px-2 py-1 rounded ${
+                    article.relevance_score >= 80 ? 'text-green-400' : 
+                    article.relevance_score >= 60 ? 'text-yellow-400' : 'text-gray-500'
+                  }`}>
+                    {article.relevance_score || '—'}
+                  </div>
+
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => handleVote(article.id, 'up')}
+                      disabled={votingId === article.id}
+                      className={`p-1.5 rounded transition-all ${
+                        votingId === article.id 
+                          ? 'opacity-50 cursor-wait' 
+                          : 'hover:bg-green-500/20 active:scale-95'
+                      }`}
+                      title="Thumbs up"
+                    >
+                      <span className="text-lg">👍</span>
+                      <span className="text-xs text-gray-500 block">{article.thumbs_up || 0}</span>
+                    </button>
+                    <button
+                      onClick={() => handleVote(article.id, 'down')}
+                      disabled={votingId === article.id}
+                      className={`p-1.5 rounded transition-all ${
+                        votingId === article.id 
+                          ? 'opacity-50 cursor-wait' 
+                          : 'hover:bg-red-500/20 active:scale-95'
+                      }`}
+                      title="Thumbs down"
+                    >
+                      <span className="text-lg">👎</span>
+                      <span className="text-xs text-gray-500 block">{article.thumbs_down || 0}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
