@@ -15,6 +15,28 @@ const SOURCE_DOMAINS = {
   'Complext': 'complex.com',
   'The FADER': 'thefader.com',
   'Stereogum': 'stereogum.com'
+  const SOURCE_DOMAINS = {
+  'Billboard': 'billboard.com',
+  'Pitchfork': 'pitchfork.com',
+  'Rolling Stone': 'rollingstone.com',
+  'Music Business Worldwide': 'musicbusinessworldwide.com',
+  'Variety': 'variety.com',
+  'NME': 'nme.com',
+  'Digital Music News': 'digitalmusicnews.com',
+  'Music Ally': 'musically.com',
+  'Hypebot': 'hypebot.com',
+  'Complex': 'complex.com',
+  'The FADER': 'thefader.com',
+  'Stereogum': 'stereogum.com',
+  'Wired': 'wired.com',
+  'The Verge AI': 'theverge.com',
+  'The Verge': 'theverge.com',
+  'TechCrunch': 'techcrunch.com',
+  'Ars Technica': 'arstechnica.com',
+  'Hollywood Reporter': 'hollywoodreporter.com',
+  'Consequence': 'consequence.net',
+  'Brooklyn Vegan': 'brooklynvegan.com',
+};
 };
 
 export default function ArticlesFeed({ articles }) {
