@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
 import ArticlesFeed from './components/ArticlesFeed';
+import AffiliateAds from './components/AffiliateAds';
 
 async function getArticles() {
   const pool = new Pool({
@@ -73,24 +74,8 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* MAIN CONTENT WITH SIDEBAR */}
-      <div className="w-full">
-        <div className="flex flex-col lg:flex-row">
-          {/* MAIN CONTENT - 75% width, left side */}
-          <div className="flex-1 lg:w-3/4 lg:pr-6">
-            <div className="max-w-7xl mx-auto px-4 py-6">
-              <ArticlesFeed articles={articles} />
-            </div>
-          </div>
-          
-          {/* AFFILIATE ADS SIDEBAR - 25% width, far right, fixed position */}
-          <aside className="w-full lg:w-1/4 lg:flex-shrink-0 lg:border-l-2 lg:border-gray-800 bg-black">
-            <div className="sticky top-4 p-4 lg:p-6">
-              <AffiliateAds />
-            </div>
-          </aside>
-        </div>
-      </div>
+      {/* INTERACTIVE FEED */}
+      <ArticlesFeed articles={articles} />
 
       {/* FOOTER */}
       <footer className="border-t-4 border-green-500 bg-black py-8">
