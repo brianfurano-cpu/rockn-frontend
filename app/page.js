@@ -90,7 +90,7 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 flex justify-center">
           <YouTubeEmbed 
             channelId={process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID || null}
-            videoId={process.env.NEXT_PUBLIC_YOUTUBE_VIDEO_ID || null}
+            videoId={process.env.NEXT_PUBLIC_YOUTUBE_VIDEO_ID || 'NW7uhUEy6Hs'}
             playlistId={process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID || null}
           />
         </div>
