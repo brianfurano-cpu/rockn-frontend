@@ -20,9 +20,9 @@ export default function AffiliateAds() {
     },
     {
       id: 3,
-      title: 'Affiliate Ad 3',
-      description: 'AI Music Software',
-      link: '#',
+      title: 'CapCut - Free Video Editor',
+      description: 'Professional video editing made easy. Create stunning videos for your content.',
+      link: '#', // TODO: Add CapCut affiliate link
       image: null,
     },
   ];
@@ -87,6 +87,29 @@ export default function AffiliateAds() {
                   <div className="text-[10px] font-semibold opacity-95 tracking-wide">DEPLOY IN SECONDS</div>
                 </div>
                 <div className="absolute top-1 right-1 text-[8px] font-bold bg-blue-500/30 px-1.5 py-0.5 rounded border border-blue-400/30">CLOUD</div>
+              </div>
+            ) : ad.id === 3 ? (
+              // Custom CapCut graphic
+              <div className="w-full h-28 bg-gradient-to-br from-[#ff6b6b] via-[#ee5a6f] to-[#ff4757] rounded mb-2 flex flex-col items-center justify-center text-white relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-600/20 to-pink-600/20"></div>
+                <div className="absolute inset-0 opacity-10" style={{
+                  backgroundImage: 'linear-gradient(45deg, rgba(255,255,255,0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(255,255,255,0.1) 25%, transparent 25%)',
+                  backgroundSize: '15px 15px'
+                }}></div>
+                <div className="relative z-10 flex flex-col items-center w-full px-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="text-2xl font-black drop-shadow-lg">✂️</div>
+                    <div className="text-base font-black tracking-tight">CapCut</div>
+                  </div>
+                  <div className="text-[9px] font-semibold opacity-95 tracking-wider text-center">
+                    FREE VIDEO EDITOR
+                  </div>
+                  <div className="absolute bottom-1 right-2 text-[8px] font-bold bg-white/20 px-1.5 py-0.5 rounded">
+                    PRO
+                  </div>
+                </div>
+                <div className="absolute top-1 left-1 w-2 h-2 bg-white/30 rounded-full"></div>
+                <div className="absolute top-2 right-2 w-1.5 h-1.5 bg-white/20 rounded-full"></div>
               </div>
             ) : ad.image ? (
               <img

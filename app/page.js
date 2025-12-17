@@ -1,10 +1,5 @@
 import { Pool } from 'pg';
 import ArticlesFeed from './components/ArticlesFeed';
-import YouTubeEmbed from './components/YouTubeEmbed';
-import AffiliateAds from './components/AffiliateAds';
-
-// Default YouTube video ID fallback
-const DEFAULT_YOUTUBE_VIDEO_ID = 'NW7uhUEy6Hs';
 
 async function getArticles() {
   const pool = new Pool({
@@ -51,7 +46,7 @@ export default async function Home() {
       <header className="border-b-4 border-green-500 bg-black">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div className="flex-1">
+            <div>
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white leading-none">
                 ROCKN
               </h1>
@@ -59,20 +54,10 @@ export default async function Home() {
                 AI-POWERED MUSIC INDUSTRY INTELLIGENCE
               </p>
             </div>
-            <div className="flex items-end gap-4">
-              {/* YouTube Video Embed */}
-              <div className="hidden lg:block">
-                <YouTubeEmbed 
-                  channelId={process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID || null}
-                  videoId={process.env.NEXT_PUBLIC_YOUTUBE_VIDEO_ID || DEFAULT_YOUTUBE_VIDEO_ID}
-                  playlistId={process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID || null}
-                />
-              </div>
-              <div className="text-left md:text-right">
-                <p className="text-gray-500 text-xs">TOTAL INDEXED</p>
-                <p className="text-white text-3xl font-black">{articles.length}</p>
-                <p className="text-gray-500 text-xs">ARTICLES</p>
-              </div>
+            <div className="text-left md:text-right">
+              <p className="text-gray-500 text-xs">TOTAL INDEXED</p>
+              <p className="text-white text-3xl font-black">{articles.length}</p>
+              <p className="text-gray-500 text-xs">ARTICLES</p>
             </div>
           </div>
         </div>
@@ -85,17 +70,6 @@ export default async function Home() {
           <span>◆ AI-SCORED</span>
           <span>◆ 19 SOURCES</span>
           <span>◆ UPDATED EVERY 3 HOURS</span>
-        </div>
-      </div>
-
-      {/* YouTube Video Embed - Mobile */}
-      <div className="lg:hidden bg-black border-b border-gray-800 py-4">
-        <div className="max-w-7xl mx-auto px-4 flex justify-center">
-          <YouTubeEmbed 
-            channelId={process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID || null}
-            videoId={process.env.NEXT_PUBLIC_YOUTUBE_VIDEO_ID || DEFAULT_YOUTUBE_VIDEO_ID}
-            playlistId={process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID || null}
-          />
         </div>
       </div>
 
