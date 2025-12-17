@@ -9,13 +9,13 @@ export default function AffiliateAds() {
       title: 'InVideo AI - Create Videos Instantly',
       description: 'Generate AI-powered videos for your music & AI content. No camera needed!',
       link: 'https://invideo.sjv.io/kO5RKv',
-      image: null,
+      image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400&h=225&fit=crop&auto=format',
     },
     {
       id: 2,
-      title: 'Affiliate Ad 2',
-      description: 'Streaming Services',
-      link: '#',
+      title: 'Railway - Deploy in Seconds',
+      description: 'Simplify your infrastructure. Deploy apps, databases, and services effortlessly.',
+      link: 'https://railway.com?referralCode=GWsfrT',
       image: null,
     },
     {
@@ -43,7 +43,29 @@ export default function AffiliateAds() {
             rel="noopener noreferrer sponsored"
             className="block bg-gray-900 border-2 border-gray-700 hover:border-green-500 rounded-lg p-3 transition-all group"
           >
-            {ad.image ? (
+            {ad.id === 1 ? (
+              // Custom InVideo graphic
+              <div className="w-full h-28 bg-gradient-to-br from-[#6366f1] via-[#8b5cf6] to-[#a855f7] rounded mb-2 flex flex-col items-center justify-center text-white relative overflow-hidden">
+                <div className="absolute inset-0 bg-black/20"></div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-3xl font-black mb-1 drop-shadow-lg">🎬</div>
+                  <div className="text-sm font-black tracking-tight mb-0.5">InVideo AI</div>
+                  <div className="text-[10px] font-semibold opacity-95 tracking-wide">CREATE VIDEOS INSTANTLY</div>
+                </div>
+                <div className="absolute top-1 right-1 text-[8px] font-bold bg-white/20 px-1.5 py-0.5 rounded">AI</div>
+              </div>
+            ) : ad.id === 2 ? (
+              // Custom Railway graphic
+              <div className="w-full h-28 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155] rounded mb-2 flex flex-col items-center justify-center text-white relative overflow-hidden border border-slate-600/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10"></div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="text-3xl font-black mb-1 drop-shadow-lg">🚂</div>
+                  <div className="text-sm font-black tracking-tight mb-0.5">Railway</div>
+                  <div className="text-[10px] font-semibold opacity-95 tracking-wide">DEPLOY IN SECONDS</div>
+                </div>
+                <div className="absolute top-1 right-1 text-[8px] font-bold bg-blue-500/30 px-1.5 py-0.5 rounded border border-blue-400/30">CLOUD</div>
+              </div>
+            ) : ad.image ? (
               <img
                 src={ad.image}
                 alt={ad.title}
