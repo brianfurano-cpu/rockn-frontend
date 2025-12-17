@@ -149,7 +149,7 @@ export default function ArticlesFeed({ articles: initialArticles }) {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="w-full">
       
       {/* SEARCH & FILTERS */}
       <div className="mb-6 space-y-3">
