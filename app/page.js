@@ -1,28 +1,14 @@
 import { Pool } from 'pg';
 import ArticlesFeed from './components/ArticlesFeed';
-import AffiliateAds from './components/AffiliateAds';
-
-// Create a singleton connection pool for better performance
-let pool = null;
-
-function getPool() {
-  if (!pool) {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
-      max: 20, // Maximum number of clients in the pool
-      idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
-      connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection cannot be established
-    });
-  }
-  return pool;
-}
 
 async function getArticles() {
-  const dbPool = getPool();
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+  });
   
   try {
-    const result = await dbPool.query(
+    const result = await pool.query(
       `SELECT 
         id, title, url, source, ai_summary, relevance_score, pub_date, category, image_url, thumbs_up, thumbs_down,
         -- Calculate boost score for music + AI articles
@@ -38,15 +24,15 @@ async function getArticles() {
          music_ai_boost DESC,
          relevance_score DESC,
          pub_date DESC 
-       LIMIT 1000`
+       LIMIT 200`
     );
     return result.rows;
   } catch (error) {
     console.error('Database error:', error);
-    // Return empty array on error to prevent site crash
     return [];
+  } finally {
+    await pool.end();
   }
-  // Note: We don't close the pool here - it's reused across requests
 }
 
 export const revalidate = 300; // Revalidate every 5 minutes
@@ -84,6 +70,17 @@ export default async function Home() {
           <span>◆ AI-SCORED</span>
           <span>◆ 19 SOURCES</span>
           <span>◆ UPDATED EVERY 3 HOURS</span>
+        </div>
+      </div>
+
+      {/* YouTube Video Embed - Mobile */}
+      <div className="lg:hidden bg-black border-b border-gray-800 py-4">
+        <div className="max-w-7xl mx-auto px-4 flex justify-center">
+          <YouTubeEmbed 
+            channelId={process.env.NEXT_PUBLIC_YOUTUBE_CHANNEL_ID || null}
+            videoId={process.env.NEXT_PUBLIC_YOUTUBE_VIDEO_ID || DEFAULT_YOUTUBE_VIDEO_ID}
+            playlistId={process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID || null}
+          />
         </div>
       </div>
 
