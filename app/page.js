@@ -2,14 +2,27 @@ import { Pool } from 'pg';
 import ArticlesFeed from './components/ArticlesFeed';
 import AffiliateAds from './components/AffiliateAds';
 
+// Create a singleton connection pool for better performance
+let pool = null;
+
+function getPool() {
+  if (!pool) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+      max: 20, // Maximum number of clients in the pool
+      idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+      connectionTimeoutMillis: 10000, // Return an error after 10 seconds if connection cannot be established
+    });
+  }
+  return pool;
+}
+
 async function getArticles() {
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
+  const dbPool = getPool();
   
   try {
-    const result = await pool.query(
+    const result = await dbPool.query(
       `SELECT 
         id, title, url, source, ai_summary, relevance_score, pub_date, category, image_url, thumbs_up, thumbs_down,
         -- Calculate boost score for music + AI articles
@@ -25,15 +38,15 @@ async function getArticles() {
          music_ai_boost DESC,
          relevance_score DESC,
          pub_date DESC 
-       LIMIT 200`
+       LIMIT 1000`
     );
     return result.rows;
   } catch (error) {
     console.error('Database error:', error);
+    // Return empty array on error to prevent site crash
     return [];
-  } finally {
-    await pool.end();
   }
+  // Note: We don't close the pool here - it's reused across requests
 }
 
 export const revalidate = 300; // Revalidate every 5 minutes
@@ -74,8 +87,24 @@ export default async function Home() {
         </div>
       </div>
 
-      {/* INTERACTIVE FEED */}
-      <ArticlesFeed articles={articles} />
+      {/* MAIN CONTENT WITH SIDEBAR */}
+      <div className="w-full">
+        <div className="flex flex-col lg:flex-row">
+          {/* MAIN CONTENT - 75% width, left side */}
+          <div className="flex-1 lg:w-3/4 lg:pr-6">
+            <div className="max-w-7xl mx-auto px-4 py-6">
+              <ArticlesFeed articles={articles} />
+            </div>
+          </div>
+          
+          {/* AFFILIATE ADS SIDEBAR - 25% width, far right, fixed position */}
+          <aside className="w-full lg:w-1/4 lg:flex-shrink-0 lg:border-l-2 lg:border-gray-800 bg-black">
+            <div className="sticky top-4 p-4 lg:p-6">
+              <AffiliateAds />
+            </div>
+          </aside>
+        </div>
+      </div>
 
       {/* FOOTER */}
       <footer className="border-t-4 border-green-500 bg-black py-8">
